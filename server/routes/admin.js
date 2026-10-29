@@ -1,4 +1,5 @@
 const express = require("express");
+const bcrypt = require("bcryptjs");
 const db = require("../db/init");
 const { requireAuth, requireRole } = require("../middleware/auth");
 
@@ -167,6 +168,42 @@ router.delete("/learners/:id", (req, res) => {
 
   db.prepare("DELETE FROM Learner WHERE LearnerID = ?").run(req.params.id);
   res.json({ message: "Learner removed" });
+});
+
+// ---------- Administrator accounts (only an existing admin can create another) ----------
+
+// GET /api/admin/administrators — who has admin access to this school
+router.get("/administrators", (req, res) => {
+  const rows = db
+    .prepare(
+      `SELECT u.UserID, u.Name, u.Email, a.Department
+       FROM User u JOIN Administrator a ON a.UserID = u.UserID
+       WHERE u.SchoolID = ? ORDER BY u.Name`
+    )
+    .all(req.user.schoolId);
+  res.json(rows);
+});
+
+// POST /api/admin/administrators — create another administrator for the SAME school
+router.post("/administrators", (req, res) => {
+  const name = (req.body.name || "").trim();
+  const email = (req.body.email || "").trim();
+  const { password, department } = req.body;
+  if (!name || !email || !password) {
+    return res.status(400).json({ error: "name, email and password are required" });
+  }
+  if (String(password).length < 6) {
+    return res.status(400).json({ error: "Password must be at least 6 characters" });
+  }
+  if (db.prepare("SELECT 1 FROM User WHERE Email = ?").get(email)) {
+    return res.status(409).json({ error: "Email already registered" });
+  }
+  const hash = bcrypt.hashSync(password, 10);
+  const userId = db
+    .prepare("INSERT INTO User (Name, Email, PasswordHash, Role, SchoolID) VALUES (?, ?, ?, 'administrator', ?)")
+    .run(name, email, hash, req.user.schoolId).lastInsertRowid;
+  db.prepare("INSERT INTO Administrator (UserID, Department) VALUES (?, ?)").run(userId, department || null);
+  res.status(201).json({ message: "Administrator created", userId: Number(userId) });
 });
 
 module.exports = router;

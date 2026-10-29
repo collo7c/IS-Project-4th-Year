@@ -2,7 +2,7 @@ const user = requireSession("administrator");
 document.getElementById("adminName").textContent = user ? user.name : "";
 
 async function init() {
-  await Promise.all([loadOverview(), loadTeachers(), loadLearners(), loadReports(), loadCurriculum()]);
+  await Promise.all([loadOverview(), loadTeachers(), loadAdmins(), loadLearners(), loadReports(), loadCurriculum()]);
 }
 
 async function loadOverview() {
@@ -172,5 +172,31 @@ async function removeLearner(id) {
     flashLearner("learnerErr", err.message);
   }
 }
+
+// ---------- Administrator accounts ----------
+async function loadAdmins() {
+  const admins = await API.get("/admin/administrators");
+  document.querySelector("#adminTable tbody").innerHTML = admins
+    .map((a) => `<tr><td>${esc(a.Name)}</td><td>${esc(a.Email)}</td><td>${esc(a.Department || "—")}</td></tr>`)
+    .join("");
+}
+
+document.getElementById("adminForm").addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const form = e.target;
+  try {
+    await API.post("/admin/administrators", {
+      name: document.getElementById("aName").value,
+      email: document.getElementById("aEmail").value,
+      password: document.getElementById("aPass").value,
+      department: document.getElementById("aDept").value,
+    });
+    form.reset();
+    await loadAdmins();
+    flashLearner("adminMsg", "Administrator created.");
+  } catch (err) {
+    flashLearner("adminErr", err.message);
+  }
+});
 
 init();

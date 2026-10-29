@@ -36,29 +36,19 @@
       <div class="error hidden" id="loginError"></div>
     </form>
 
-    <form id="registerForm" class="hidden">
+        <form id="registerForm" class="hidden">
       <label>Full name</label>
       <input type="text" id="regName" required />
       <label>Email</label>
       <input type="email" id="regEmail" required />
       <label>Password</label>
       <input type="password" id="regPassword" required minlength="6" />
-      <label>Role</label>
-      <select id="regRole">
-        <option value="teacher">Teacher</option>
-        <option value="administrator">Administrator</option>
-      </select>
       <label>School</label>
       <select id="regSchool"></select>
-      <div id="teacherFields">
-        <label>TSC number</label>
-        <input type="text" id="regTsc" />
-      </div>
-      <div id="adminFields" class="hidden">
-        <label>Department</label>
-        <input type="text" id="regDept" />
-      </div>
-      <button type="submit">Create account</button>
+      <label>TSC number</label>
+      <input type="text" id="regTsc" />
+      <button type="submit">Create teacher account</button>
+      <div class="hint">Administrator accounts are created by an existing administrator.</div>
       <div class="error hidden" id="registerError"></div>
       <div class="success hidden" id="registerSuccess"></div>
     </form>
@@ -82,12 +72,7 @@
     document.getElementById("registerForm").classList.toggle("hidden", which !== "register");
   }
 
-  document.getElementById("regRole").addEventListener("change", (e) => {
-    const isTeacher = e.target.value === "teacher";
-    document.getElementById("teacherFields").classList.toggle("hidden", !isTeacher);
-    document.getElementById("adminFields").classList.toggle("hidden", isTeacher);
-  });
-
+  
   async function loadSchools() {
     const schools = await API.get("/schools");
     const sel = document.getElementById("regSchool");
@@ -122,10 +107,9 @@
         name: document.getElementById("regName").value,
         email: document.getElementById("regEmail").value,
         password: document.getElementById("regPassword").value,
-        role: document.getElementById("regRole").value,
+        role: "teacher",
         schoolId: Number(document.getElementById("regSchool").value),
         tscNumber: document.getElementById("regTsc").value,
-        department: document.getElementById("regDept").value,
       });
       okEl.textContent = "Account created — you can sign in now.";
       okEl.classList.remove("hidden");

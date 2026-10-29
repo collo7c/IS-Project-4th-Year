@@ -30,6 +30,26 @@
   </div>
 
   <div class="card">
+   <h2>Administrator accounts</h2>
+   <div class="hint">Only an existing administrator can create another. New admins join your school.</div>
+   <table id="adminTable">
+    <thead><tr><th>Name</th><th>Email</th><th>Department</th></tr></thead>
+    <tbody></tbody>
+    </table>
+    <form id="adminForm">
+     <div class="grid">
+      <div><label>Full name</label><input type="text" id="aName" required /></div>
+      <div><label>Email</label><input type="email" id="aEmail" required /></div>
+      <div><label>Temporary password</label><input type="password" id="aPass" required minlength="6" /></div>
+      <div><label>Department</label><input type="text" id="aDept" /></div>      
+    </div>
+      <button type="submit">Create administrator</button>
+      <div class="success hidden" id="adminMsg"></div>
+      <div class="error hidden" id="adminErr"></div>
+    </form>
+  </div>
+
+  <div class="card">
     <h2>Manage learners</h2>
     <form id="learnerForm">
       <div class="grid">

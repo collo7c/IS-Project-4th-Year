@@ -1,0 +1,22 @@
+
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Run CBC System",
+            "type": "node",
+            "request": "launch",
+            "runtimeExecutable": "npm.cmd",
+            "runtimeArgs": [
+                "start"
+            ],
+            "cwd": "${workspaceFolder}",
+            "console": "integratedTerminal",
+            "serverReadyAction": {
+                "pattern": "(localhost:3000)",
+                "uriFormat": "http://%s",
+                "action": "openExternally"
+            }
+        }
+    ]
+}
