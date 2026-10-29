@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Teacher Dashboard — CBC Competency Tracker</title>
+<link rel="stylesheet" href="/css/style.css" />
+</head>
+<body>
+<header class="topbar">
+  <h1>CBC Competency Tracker — Teacher</h1>
+  <div class="right">
+    <span id="netBadge" class="badge online">Online</span>
+    <span id="pendingBadge" class="badge pending hidden">0 pending</span>
+    <button id="syncBtn" class="secondary" style="margin:0;">Sync now</button>
+    <span id="teacherName"></span>
+    <button class="secondary" style="margin:0;" onclick="logout()">Log out</button>
+  </div>
+</header>
+
+<main>
+  <div class="card">
+    <h2>Record competency assessment <span class="hint">(works offline — queues locally, syncs when back online)</span></h2>
+    <form id="recordForm">
+      <label>Learner</label>
+      <select id="fLearner" required></select>
+      <label>Competency indicator</label>
+      <select id="fIndicator" required></select>
+      <label>Rubric level</label>
+      <select id="fRubric">
+        <option>Exceeds</option>
+        <option selected>Meets</option>
+        <option>Approaches</option>
+        <option>Below</option>
+      </select>
+      <label>Observation notes</label>
+      <textarea id="fNotes" placeholder="What did you observe?"></textarea>
+      <button type="submit">Save record</button>
+      <div class="success hidden" id="recordSuccess"></div>
+    </form>
+  </div>
+
+  <div class="card">
+    <h2>My competency records</h2>
+    <table id="recordsTable">
+      <thead><tr><th>Learner</th><th>Indicator</th><th>Rubric</th><th>Notes</th><th>Status</th></tr></thead>
+      <tbody></tbody>
+    </table>
+  </div>
+
+  <div class="card">
+    <h2>Generate progress report</h2>
+    <label>Learner</label>
+    <select id="reportLearner"></select>
+    <button id="genReportBtn">Generate report</button>
+    <div id="reportOutput" style="margin-top:12px;"></div>
+  </div>
+
+  <div class="card">
+    <h2>CBC learning resources <span class="hint">(cached list — available while offline)</span></h2>
+    <form id="uploadForm">
+      <label>Title</label>
+      <input type="text" id="resTitle" required />
+      <label>Sub-strand</label>
+      <select id="resSubStrand" required></select>
+      <label>File</label>
+      <input type="file" id="resFile" required />
+      <button type="submit">Upload resource</button>
+    </form>
+    <table id="resourceTable" style="margin-top:14px;">
+      <thead><tr><th>Title</th><th>Sub-strand</th><th>File</th></tr></thead>
+      <tbody></tbody>
+    </table>
+  </div>
+</main>
+
+<script src="/js/api.js"></script>
+<script src="/js/offline.js"></script>
+<script src="/js/teacher.js"></script>
+</body>
+</html>
